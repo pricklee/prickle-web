@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+  background: #0a0a0a;
+  color: #00ffee;
+  font-family: 'Press Start 2P', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.terminal {
+  text-align: center;
+  padding: 20px;
+}
+
+img {
+  margin-top: 20px;
+  width: 128px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 10px #00ffee);
+}
+
+/* Glitch Effect */
+.glitch {
+  color: #fff;
+  position: relative;
+  display: inline-block;
+  animation: glitch 1s infinite;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(class);
+  position: absolute;
+  left: 0;
+}
+
+.glitch::before {
+  animation: glitchTop 1s infinite;
+  color: #f0f;
+  z-index: -1;
+}
+
+.glitch::after {
+  animation: glitchBottom 1s infinite;
+  color: #0ff;
+  z-index: -2;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes glitchTop {
+  0% { clip-path: inset(0 0 90% 0); transform: translate(1px, -1px); }
+  50% { clip-path: inset(10% 0 80% 0); transform: translate(-1px, 1px); }
+  100% { clip-path: inset(0 0 90% 0); transform: translate(1px, -1px); }
+}
+
+@keyframes glitchBottom {
+  0% { clip-path: inset(90% 0 0 0); transform: translate(-1px, 1px); }
+  50% { clip-path: inset(80% 0 10% 0); transform: translate(1px, -1px); }
+  100% { clip-path: inset(90% 0 0 0); transform: translate(-1px, 1px); }
+}
