@@ -1,0 +1,19 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "prickle web",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pricklee/prickle-web.git"
+  },
+  "author": "pricklety",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pricklee/prickle-web/issues"
+  },
+  "homepage": "https://github.com/pricklee/prickle-web#readme"
+}
