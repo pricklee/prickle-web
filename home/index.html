@@ -340,44 +340,47 @@
 
     // Modified performSearch to support pagination
     function performSearch(query) {
-      if (!query) {
-      resultsDiv.innerHTML = '<p style="color:#008888;">Please enter a search query.</p>';
-      summaryDiv.style.display = 'none';
-      return;
-      }
+  if (!query) {
+    resultsDiv.innerHTML = '<p style="color:#008888;">Please enter a search query.</p>';
+    summaryDiv.style.display = 'none';
+    return;
+  }
 
-      summaryDiv.style.display = 'none';
-      resultsDiv.innerHTML = '<p>Loading...</p>';
+  summaryDiv.style.display = 'none';
+  resultsDiv.innerHTML = '<p>Loading...</p>';
 
-      if (currentTab === 'maps') {
-      showMaps(query);
-      return;
-      }
+  if (currentTab === 'maps') {
+    showMaps(query);
+    return;
+  }
 
-      // Build API URL depending on tab (web or images)
-      let searchType = currentTab === 'images' ? 'image' : 'web';
-      let start = 1 + ((currentPage - 1) * (currentTab === 'images' ? IMAGES_PER_PAGE : RESULTS_PER_PAGE));
-      let url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&start=${start}`;
+  // Build API URL depending on tab (web or images)
+  let searchType = currentTab === 'images' ? 'image' : 'web';
+  let start = 1 + ((currentPage - 1) * (currentTab === 'images' ? IMAGES_PER_PAGE : RESULTS_PER_PAGE));
+  let url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&start=${start}`;
 
-      if (searchType === 'image') {
-      url += `&searchType=image&num=${IMAGES_PER_PAGE}`;
-      } else {
-      url += `&num=${RESULTS_PER_PAGE}`;
-      }
+  if (searchType === 'image') {
+    url += `&searchType=image&num=${IMAGES_PER_PAGE}`;
+  } else {
+    url += `&num=${RESULTS_PER_PAGE}`;
+  }
 
-      fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) {
+  // Add safe search parameter
+  url += `&safe=${isSafeSearchEnabled() ? 'active' : 'off'}`;
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
         resultsDiv.innerHTML = `<p>Error: ${data.error.message}</p>`;
         return;
-        }
-        renderResults(data);
-      })
-      .catch(() => {
-        resultsDiv.innerHTML = '<p>Failed to fetch results.</p>';
-      });
-    }
+      }
+      renderResults(data);
+    })
+    .catch(() => {
+      resultsDiv.innerHTML = '<p>Failed to fetch results.</p>';
+    });
+}
 
     // Reset page on new search or tab change
     function resetPageAndSearch(query) {
