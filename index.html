@@ -21,7 +21,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     const spotifyStatus = document.getElementById("spotify-status");
-    fetchSpotifyStatus().then(status => {
+    updateSpotify().then(status => {
       spotifyStatus.textContent = status;
     });
   });</script>
