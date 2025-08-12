@@ -7,8 +7,9 @@ async function updateSpotify() {
     if (data.playing) {
       const track = data.track.item;
       container.innerHTML = `
-        🎵 Now playing: <strong>${track.name}</strong> by ${track.artists.map(a => a.name).join(', ')}<br>
-        <img src="${track.album.images[0].url}" alt="Album art" style="height:80px; margin-top:10px;">
+         <img src="${track.album.images[0].url}" alt="Album art" style="height:80px; margin-top:10px;"> Now playing: <strong>${track.name}</strong> 
+         by ${track.artists.map(a => a.name).join(', ')}<br>
+       
       `;
     } else {
       container.textContent = 'Not playing anything right now.';
