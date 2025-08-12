@@ -168,11 +168,19 @@
   </style>
 </head>
 <body>
+  <button id="homeButton" style="margin-bottom: 18px; align-self: flex-start;">
+    &larr; Back to prickle.dev
+  </button>
   <h1 class="glitch">prickle web search</h1>
+  
 
   <div class="search-container">
     <input type="text" id="searchInput" placeholder="Search the web..." />
     <button id="searchButton">SEARCH</button>
+    <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: #00ffee; margin-left: 8px;">
+      <input type="checkbox" id="safeSearchToggle" checked style="accent-color:#00ffee;">
+      Safe Search
+    </label>
   </div>
 
   <div class="tabs">
@@ -199,7 +207,9 @@
     const tabs = document.querySelectorAll('.tab');
 
     let currentTab = 'web';
-
+    document.getElementById('homeButton').onclick = () => {
+      window.location.href = 'https://prickle.dev/';
+    };
     // Switch tabs
     tabs.forEach(tab => {
   tab.addEventListener('click', () => {
@@ -214,7 +224,9 @@
       resultsDiv.innerHTML = '<p style="color:#008888;">Please enter a search query.</p>';
       return;
     }
-
+    function isSafeSearchEnabled() {
+      return document.getElementById('safeSearchToggle').checked;
+    }
     if (currentTab === 'maps') {
       showMaps(query);
     } else {
@@ -263,12 +275,18 @@
       }
 
       // Build API URL depending on tab (web or images)
-      let searchType = currentTab === 'images' ? 'image' : 'web';
-      let url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}`;
+       let searchType = currentTab === 'images' ? 'image' : 'web';
+      let start = 1 + ((currentPage - 1) * (currentTab === 'images' ? IMAGES_PER_PAGE : RESULTS_PER_PAGE));
+      let url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&start=${start}`;
 
       if (searchType === 'image') {
-        url += '&searchType=image';
+        url += `&searchType=image&num=${IMAGES_PER_PAGE}`;
+      } else {
+        url += `&num=${RESULTS_PER_PAGE}`;
       }
+
+      // Add safe search parameter
+      url += `&safe=${isSafeSearchEnabled() ? 'active' : 'off'}`;
 
       fetch(url)
         .then(res => res.json())
@@ -277,56 +295,174 @@
             resultsDiv.innerHTML = `<p>Error: ${data.error.message}</p>`;
             return;
           }
-          if (!data.items || data.items.length === 0) {
-            resultsDiv.innerHTML = '<p>No results found.</p>';
-            return;
-          }
           renderResults(data);
-          renderSummary(data);
         })
         .catch(() => {
           resultsDiv.innerHTML = '<p>Failed to fetch results.</p>';
         });
+    
     }
+    // --- Pagination State ---
+    let currentPage = 1;
+    const RESULTS_PER_PAGE = 20;
+    const IMAGES_PER_PAGE = 20;
 
-    // Render results list
+    // Render results list with pagination
     function renderResults(data) {
-      if (currentTab === 'images') {
-        resultsDiv.innerHTML = '';
-        const container = document.createElement('div');
-        container.className = 'image-results';
-        data.items.forEach(item => {
-          const img = document.createElement('img');
-          img.src = item.link;
-          img.alt = item.title;
-          img.title = item.title;
-          img.addEventListener('click', () => window.open(item.link, '_blank'));
-          container.appendChild(img);
-        });
-        resultsDiv.appendChild(container);
-      } else {
-        resultsDiv.innerHTML = '';
-        data.items.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'result';
-          div.innerHTML = `
-            <a href="${item.link}" class="title" target="_blank" rel="noopener">${item.title}</a>
-            <p class="snippet">${item.snippet}</p>
-          `;
-          resultsDiv.appendChild(div);
-        });
+      resultsDiv.innerHTML = '';
+      let totalResults = parseInt(data.searchInformation?.totalResults || "0", 10);
+      let items = data.items || [];
+      let totalPages = Math.ceil(totalResults / (currentTab === 'images' ? IMAGES_PER_PAGE : RESULTS_PER_PAGE));
+      if (items.length === 0) {
+      resultsDiv.innerHTML = '<p>No results found.</p>';
+      return;
       }
+
+      if (currentTab === 'images') {
+      const container = document.createElement('div');
+      container.className = 'image-results';
+      items.forEach(item => {
+        const img = document.createElement('img');
+        img.src = item.link;
+        img.alt = item.title;
+        img.title = item.title;
+        img.addEventListener('click', () => window.open(item.link, '_blank'));
+        container.appendChild(img);
+      });
+      resultsDiv.appendChild(container);
+      } else {
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'result';
+        div.innerHTML = `
+        <a href="${item.link}" class="title" target="_blank" rel="noopener">${item.title}</a>
+        <p class="snippet">${item.snippet}</p>
+        `;
+        resultsDiv.appendChild(div);
+      });
+      }
+      renderPagination(totalPages);
     }
 
-    // Render simple summary if available (using first item's snippet)
-    function renderSummary(data) {
-      // Google Custom Search API doesn't provide rich knowledge panel data directly,
-      // but we can show the snippet of the first result as a basic summary.
-      if (data.items && data.items.length > 0 && data.items[0].snippet) {
-        summaryDiv.style.display = 'block';
-        summaryDiv.textContent = data.items[0].snippet;
-      }
+    // Render pagination controls
+    function renderPagination(totalPages) {
+      if (totalPages <= 1) return;
+      const pagination = document.createElement('div');
+      pagination.style.display = 'flex';
+      pagination.style.justifyContent = 'center';
+      pagination.style.gap = '10px';
+      pagination.style.marginTop = '20px';
+
+      const prevBtn = document.createElement('button');
+      prevBtn.textContent = 'Prev';
+      prevBtn.disabled = currentPage === 1;
+      prevBtn.onclick = () => changePage(currentPage - 1);
+
+      const nextBtn = document.createElement('button');
+      nextBtn.textContent = 'Next';
+      nextBtn.disabled = currentPage === totalPages;
+      nextBtn.onclick = () => changePage(currentPage + 1);
+
+      const pageInfo = document.createElement('span');
+      pageInfo.style.alignSelf = 'center';
+      pageInfo.style.color = '#00ffee';
+      pageInfo.style.fontFamily = "'Press Start 2P', monospace";
+      pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+      pagination.appendChild(prevBtn);
+      pagination.appendChild(pageInfo);
+      pagination.appendChild(nextBtn);
+
+      resultsDiv.appendChild(pagination);
     }
+
+    // Change page and fetch new results
+    function changePage(page) {
+      currentPage = page;
+      performSearch(searchInput.value.trim());
+    }
+
+    // Modified performSearch to support pagination
+    function performSearch(query) {
+      if (!query) {
+      resultsDiv.innerHTML = '<p style="color:#008888;">Please enter a search query.</p>';
+      summaryDiv.style.display = 'none';
+      return;
+      }
+
+      summaryDiv.style.display = 'none';
+      resultsDiv.innerHTML = '<p>Loading...</p>';
+
+      if (currentTab === 'maps') {
+      showMaps(query);
+      return;
+      }
+
+      // Build API URL depending on tab (web or images)
+      let searchType = currentTab === 'images' ? 'image' : 'web';
+      let start = 1 + ((currentPage - 1) * (currentTab === 'images' ? IMAGES_PER_PAGE : RESULTS_PER_PAGE));
+      let url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}&start=${start}`;
+
+      if (searchType === 'image') {
+      url += `&searchType=image&num=${IMAGES_PER_PAGE}`;
+      } else {
+      url += `&num=${RESULTS_PER_PAGE}`;
+      }
+
+      fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+        resultsDiv.innerHTML = `<p>Error: ${data.error.message}</p>`;
+        return;
+        }
+        renderResults(data);
+      })
+      .catch(() => {
+        resultsDiv.innerHTML = '<p>Failed to fetch results.</p>';
+      });
+    }
+
+    // Reset page on new search or tab change
+    function resetPageAndSearch(query) {
+      currentPage = 1;
+      performSearch(query);
+    }
+
+    // Update tab click to reset page
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentTab = tab.dataset.tab;
+      resultsDiv.innerHTML = '';
+      summaryDiv.style.display = 'none';
+      currentPage = 1;
+
+      const query = searchInput.value.trim();
+      if (!query) {
+        resultsDiv.innerHTML = '<p style="color:#008888;">Please enter a search query.</p>';
+        return;
+      }
+
+      if (currentTab === 'maps') {
+        showMaps(query);
+      } else {
+        performSearch(query);
+      }
+      });
+    });
+
+    // Update search button and enter key to reset page
+    searchButton.addEventListener('click', () => {
+      resetPageAndSearch(searchInput.value.trim());
+    });
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+      resetPageAndSearch(searchInput.value.trim());
+      }
+    });
+
 
   </script>
 </body>
