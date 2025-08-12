@@ -1,0 +1,91 @@
+/* Your existing body style */
+body {
+  margin: 0;
+  background: #0a0a0a;
+  color: #00ffee;
+  font-family: 'Press Start 2P', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Center the search container */
+.custom-search-container {
+  width: 90vw;
+  max-width: 600px;
+}
+
+/* Override Google Search Box styles */
+.gsc-input {
+  background: #0a0a0a !important;
+  border: 2px solid #00ffee !important;
+  border-radius: 12px !important;
+  color: #00ffee !important;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 16px !important;
+  padding: 12px !important;
+  box-shadow: 0 0 10px #00ffee !important;
+}
+
+/* Placeholder color */
+.gsc-input::-webkit-input-placeholder {
+  color: #008888 !important;
+}
+.gsc-input::-moz-placeholder {
+  color: #008888 !important;
+}
+.gsc-input:-ms-input-placeholder {
+  color: #008888 !important;
+}
+.gsc-input:-moz-placeholder {
+  color: #008888 !important;
+}
+
+/* Search button */
+.gsc-search-button {
+  background-color: #00ffee !important;
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 0 12px #00ffee !important;
+}
+
+/* Search results container */
+.gsc-results-wrapper-visible {
+  background-color: #121212 !important;
+  border-radius: 12px !important;
+  margin-top: 20px !important;
+  padding: 15px !important;
+  box-shadow: 0 0 20px #00ffee !important;
+  font-family: 'Press Start 2P', monospace !important;
+  color: #00ffee !important;
+}
+
+/* Individual search result */
+.gsc-webResult {
+  border-bottom: 1px solid #00ffee !important;
+  padding: 10px 0 !important;
+}
+
+/* Result titles */
+.gsc-webResult a.gs-title {
+  color: #00ffee !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+}
+
+.gsc-webResult a.gs-title:hover {
+  text-shadow: 0 0 10px #00ffee;
+}
+
+/* Result snippet */
+.gs-bidi-start-align {
+  color: #00cccc !important;
+}
+
+/* Remove default google fonts */
+.gsc-control-cse {
+  font-family: 'Press Start 2P', monospace !important;
+}

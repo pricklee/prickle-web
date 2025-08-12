@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Neon Multi-Tab Search</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      background: #0a0a0a;
+      color: #00ffee;
+      font-family: 'Press Start 2P', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-y: scroll;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #00ffee;
+    }
+
+    /* --- Search Input & Button --- */
+    .search-container {
+      display: flex;
+      width: 100%;
+      max-width: 700px;
+      gap: 10px;
+    }
+    input[type="text"] {
+      flex-grow: 1;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #00ffee;
+      background: #121212;
+      color: #00ffee;
+      box-shadow: 0 0 10px #00ffee;
+      outline: none;
+    }
+    input::placeholder {
+      color: #008888;
+    }
+    button {
+      background: #00ffee;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-family: 'Press Start 2P', monospace;
+      font-weight: bold;
+      cursor: pointer;
+      color: #0a0a0a;
+      box-shadow: 0 0 12px #00ffee;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #00cccc;
+    }
+
+    /* --- Tabs --- */
+    .tabs {
+      margin: 20px 0 10px;
+      display: flex;
+      gap: 10px;
+      max-width: 700px;
+    }
+    .tab {
+      flex-grow: 1;
+      text-align: center;
+      padding: 12px 0;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 2px solid #00ffee;
+      user-select: none;
+      color: #00ffee;
+      font-weight: bold;
+      box-shadow: 0 0 10px #00ffee;
+      transition: background-color 0.3s ease;
+    }
+    .tab.active, .tab:hover {
+      background-color: #00ffee;
+      color: #0a0a0a;
+      box-shadow: 0 0 20px #00cccc;
+    }
+
+    /* --- Results container --- */
+    .results {
+      width: 100%;
+      max-width: 700px;
+      background: #121212;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 30px #00ffee;
+      color: #00ffee;
+      min-height: 300px;
+    }
+
+    /* --- Result item --- */
+    .result {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #00ffee;
+      padding-bottom: 12px;
+    }
+    .result a.title {
+      color: #00ffee;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: none;
+      text-shadow: 0 0 8px #00ffee;
+    }
+    .result a.title:hover {
+      text-shadow: 0 0 20px #00cccc;
+    }
+    .result .snippet {
+      color: #00cccc;
+      font-size: 14px;
+      margin-top: 6px;
+      white-space: pre-wrap;
+    }
+
+    /* --- Image results --- */
+    .image-results {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+    .image-results img {
+      width: 150px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00ffee;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .image-results img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px #00cccc;
+    }
+
+    /* --- Maps embed --- */
+    .maps-container iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 30px #00ffee;
+    }
+
+    /* --- Summary card --- */
+    .summary-card {
+      background: #0d0d0d;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px #00ffee;
+      color: #00ffee;
+      font-size: 14px;
+      line-height: 1.4;
+      max-width: 700px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="glitch">Neon Search</h1>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search the web..." />
+    <button id="searchButton">SEARCH</button>
+  </div>
+
+  <div class="tabs">
+  <div class="tab active" data-tab="web">Web</div>
+  <div class="tab" data-tab="images">Images</div>
+  <div class="tab" data-tab="maps">Maps</div>
+</div>
+
+
+  <div id="summary" class="summary-card" style="display:none;"></div>
+
+  <div id="results" class="results">
+    
+  </div>
+
+  <script>
+    const apiKey = 'AIzaSyC8YDnnrZaLGcdGXX7LK-7_sJd-mMfotms';
+    const cx = '137e3a94960454104'; 
+
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const resultsDiv = document.getElementById('results');
+    const summaryDiv = document.getElementById('summary');
+    const tabs = document.querySelectorAll('.tab');
+
+    let currentTab = 'web';
+
+    // Switch tabs
+    tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTab = tab.dataset.tab;
+    resultsDiv.innerHTML = '';
+    summaryDiv.style.display = 'none';
+
+    const query = searchInput.value.trim();
+    if (!query) {
+      resultsDiv.innerHTML = '<p style="color:#008888;">Please enter a search query.</p>';
+      return;
+    }
+
+    if (currentTab === 'maps') {
+      showMaps(query);
+    } else {
+      performSearch(query);
+    }
+  });
+});
+
+
+    // Search button click
+    searchButton.addEventListener('click', () => {
+      performSearch(searchInput.value.trim());
+    });
+
+    // Press Enter key triggers search
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        performSearch(searchInput.value.trim());
+      }
+    });
+
+    // Show Google Maps embed for the query
+    function showMaps(query) {
+      if (!query) {
+        resultsDiv.innerHTML = '<p style="color:#008888;">Enter a location to see maps.</p>';
+        return;
+      }
+      const mapUrl = `https://www.google.com/maps/embed/v1/search?key=${apiKey}&q=${encodeURIComponent(query)}`;
+      resultsDiv.innerHTML = `<div class="maps-container"><iframe src="${mapUrl}" allowfullscreen></iframe></div>`;
+    }
+
+    // Perform search based on current tab
+    function performSearch(query) {
+      if (!query) {
+        resultsDiv.innerHTML = '<p style="color:#008888;">Please enter a search query.</p>';
+        summaryDiv.style.display = 'none';
+        return;
+      }
+
+      summaryDiv.style.display = 'none';
+      resultsDiv.innerHTML = '<p>Loading...</p>';
+
+      if (currentTab === 'maps') {
+        showMaps(query);
+        return;
+      }
+
+      // Build API URL depending on tab (web or images)
+      let searchType = currentTab === 'images' ? 'image' : 'web';
+      let url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(query)}`;
+
+      if (searchType === 'image') {
+        url += '&searchType=image';
+      }
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            resultsDiv.innerHTML = `<p>Error: ${data.error.message}</p>`;
+            return;
+          }
+          if (!data.items || data.items.length === 0) {
+            resultsDiv.innerHTML = '<p>No results found.</p>';
+            return;
+          }
+          renderResults(data);
+          renderSummary(data);
+        })
+        .catch(() => {
+          resultsDiv.innerHTML = '<p>Failed to fetch results.</p>';
+        });
+    }
+
+    // Render results list
+    function renderResults(data) {
+      if (currentTab === 'images') {
+        resultsDiv.innerHTML = '';
+        const container = document.createElement('div');
+        container.className = 'image-results';
+        data.items.forEach(item => {
+          const img = document.createElement('img');
+          img.src = item.link;
+          img.alt = item.title;
+          img.title = item.title;
+          img.addEventListener('click', () => window.open(item.link, '_blank'));
+          container.appendChild(img);
+        });
+        resultsDiv.appendChild(container);
+      } else {
+        resultsDiv.innerHTML = '';
+        data.items.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'result';
+          div.innerHTML = `
+            <a href="${item.link}" class="title" target="_blank" rel="noopener">${item.title}</a>
+            <p class="snippet">${item.snippet}</p>
+          `;
+          resultsDiv.appendChild(div);
+        });
+      }
+    }
+
+    // Render simple summary if available (using first item's snippet)
+    function renderSummary(data) {
+      // Google Custom Search API doesn't provide rich knowledge panel data directly,
+      // but we can show the snippet of the first result as a basic summary.
+      if (data.items && data.items.length > 0 && data.items[0].snippet) {
+        summaryDiv.style.display = 'block';
+        summaryDiv.textContent = data.items[0].snippet;
+      }
+    }
+
+  </script>
+</body>
+</html>
