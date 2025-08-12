@@ -3,31 +3,35 @@ async function updateSpotify() {
     const res = await fetch('https://spotify.ramulickarlo15.workers.dev/');
     const data = await res.json();
 
-    const container = document.getElementById('spotify-status');
+    const albumArt = document.getElementById('album-art');
+    const trackName = document.getElementById('track-name');
+    const trackArtists = document.getElementById('track-artists');
+    const message = document.getElementById('spotify-message');
+    const nowPlayingContainer = document.getElementById('spotify-status');
+
     if (data.playing) {
       const track = data.track.item;
-      container.innerHTML = `
-        <div style="display: flex; align-items: center; margin-top: 10px;">
-  <img src="${track.album.images[0].url}" alt="Album art" style="height: 80px; margin-right: 10px;">
-  <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.2;">
-  Listening to:
-    <div style="font-weight: bold;">${track.name}</div>
-    <div>${track.artists.map(a => a.name).join(', ')}</div>
-  </div>
-</div>
 
-       
-      `;
+      albumArt.src = track.album.images[0].url;
+      albumArt.alt = `Album art for ${track.name}`;
+
+      trackName.textContent = track.name;
+      trackArtists.textContent = track.artists.map(a => a.name).join(', ');
+
+      nowPlayingContainer.style.display = 'flex';  // show the info container
+      message.textContent = ''; // clear any messages
     } else {
-      container.textContent = 'I\'m not playing anything right now on Spotify.';
+      nowPlayingContainer.style.display = 'none'; // hide the info container
+      message.textContent = `I'm not playing anything right now on Spotify.`;
     }
   } catch (e) {
-    document.getElementById('spotify-status').textContent = 'Failed to load Spotify status.';
+    document.getElementById('spotify-status').style.display = 'none';
+    document.getElementById('spotify-message').textContent = 'Failed to load Spotify status.';
   }
 }
 
-// Update on page load
+// Initial load
 updateSpotify();
 
-// Optional: Refresh every 3 seconds
+// Refresh every 3 seconds
 setInterval(updateSpotify, 3000);
