@@ -65,7 +65,7 @@ body {
 
 .now-playing {
   display: flex;
-  align-items: center;
+  align-items: left;
   margin-top: 15px;
   padding: 10px 15px;
   background: #121212;
@@ -73,7 +73,7 @@ body {
   max-width: 400px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   color: #eee;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Press Start 2P', monospace;
 }
 
 .album-art {
