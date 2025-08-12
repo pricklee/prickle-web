@@ -7,8 +7,14 @@ async function updateSpotify() {
     if (data.playing) {
       const track = data.track.item;
       container.innerHTML = `
-         <img src="${track.album.images[0].url}" alt="Album art" style="height:80px; margin-top:10px;"> Now playing: <strong>${track.name}</strong> 
-         by ${track.artists.map(a => a.name).join(', ')}<br>
+        <div style="display: flex; align-items: center; margin-top: 10px;">
+  <img src="${track.album.images[0].url}" alt="Album art" style="height: 80px; margin-right: 10px;">
+  <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.2;">
+    <div style="font-weight: bold;">${track.name}</div>
+    <div>${track.artists.map(a => a.name).join(', ')}</div>
+  </div>
+</div>
+
        
       `;
     } else {
