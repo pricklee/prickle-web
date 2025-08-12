@@ -18,12 +18,5 @@
   </div>
   <div id="spotify-status">Loading...</div>
 <script src="spotify-widget.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const spotifyStatus = document.getElementById("spotify-status");
-    updateSpotify().then(status => {
-      spotifyStatus.textContent = status;
-    });
-  });</script>
 </body>
 </html>
