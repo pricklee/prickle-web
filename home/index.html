@@ -197,6 +197,11 @@
   </div>
 
   <script>
+
+    
+    function isSafeSearchEnabled() {
+      return document.getElementById('safeSearchToggle').checked;
+    }
     const apiKey = 'AIzaSyC8YDnnrZaLGcdGXX7LK-7_sJd-mMfotms';
     const cx = '137e3a94960454104'; 
 
@@ -223,9 +228,6 @@
     if (!query) {
       resultsDiv.innerHTML = '<p style="color:#008888;">Please enter a search query.</p>';
       return;
-    }
-    function isSafeSearchEnabled() {
-      return document.getElementById('safeSearchToggle').checked;
     }
     if (currentTab === 'maps') {
       showMaps(query);
