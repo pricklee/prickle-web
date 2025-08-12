@@ -44,7 +44,10 @@ body {
   display: flex;
   gap: 10px;
   margin-top: 20px;
+  flex-wrap: wrap;      
+  justify-content: center; 
 }
+
 .button-twitter:hover {
   background-color: #1a8f9c; 
   color: #00ffee;
