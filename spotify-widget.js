@@ -1,6 +1,6 @@
 async function updateSpotify() {
   try {
-    const res = await fetch('https://spotify.ramulickarlo15.workers.dev/'); // your Worker URL here
+    const res = await fetch('https://spotify.ramulickarlo15.workers.dev/');
     const data = await res.json();
 
     const container = document.getElementById('spotify-status');
@@ -10,6 +10,7 @@ async function updateSpotify() {
         <div style="display: flex; align-items: center; margin-top: 10px;">
   <img src="${track.album.images[0].url}" alt="Album art" style="height: 80px; margin-right: 10px;">
   <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.2;">
+  Listening to:
     <div style="font-weight: bold;">${track.name}</div>
     <div>${track.artists.map(a => a.name).join(', ')}</div>
   </div>
@@ -18,7 +19,7 @@ async function updateSpotify() {
        
       `;
     } else {
-      container.textContent = 'Not playing anything right now.';
+      container.textContent = 'I\'m not playing anything right now on Spotify.';
     }
   } catch (e) {
     document.getElementById('spotify-status').textContent = 'Failed to load Spotify status.';
