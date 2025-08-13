@@ -1,40 +1,49 @@
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>prickle's Terminal</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <meta content="prickle's Terminal" property="og:title" />
-<meta content="Official website for Pricklety" property="og:description" />
-<meta content="/favicon.png" property="og:image" />
-<meta content="#43B581" data-react-helmet="true" name="theme-color" />
-    <link rel="stylesheet" href="style.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div class="terminal">
-      <h1 class="glitch">coming soon... (日本語テスト)</h1>
-      <p class="terminal">class="terminal"</p>
-      
-      <div class="buttons">
-        <a href="https://x.com/pricklety" target="_blank" rel="noopener noreferrer" class="button-twitter">My Twitter</a>
-        <a href="https://twitch.tv/pricklety" target="_blank" rel="noopener noreferrer" class="button-twitch">My Twitch</a>
-        <a href="https://youtube.com/@Pricklety" target="_blank" rel="noopener noreferrer" class="button-youtube">My YouTube</a>
-        <a href="/home" target="_blank" rel="noopener noreferrer" class="button-youtube">prickle web</a>
-      </div>
-      
-     <div id="spotify-container" class="now-playing" style="display:none;">
-  <img id="album-art" class="album-art" src="" alt="Album art" />
-  <div class="track-info">
-    <div class="listening-to">Listening to:</div>
-    <div id="track-name" class="track-name"></div>
-    <div id="track-artists" class="track-artists"></div>
-  </div>
-</div>
-<p id="spotify-message" style="color:#ccc; margin-top:10px;">Loading...</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>prickle's Terminal</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <meta content="prickle's Terminal" property="og:title" />
+  <meta content="Official website for Pricklety" property="og:description" />
+  <meta content="/favicon.png" property="og:image" />
+  <meta content="#43B581" name="theme-color" />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="terminal">
+    <h1 class="glitch">prickle's terminal</h1>
+    <p class="terminal">v1.1</p>
+
+    <div class="buttons">
+      <a href="https://x.com/pricklety" target="_blank" class="button-twitter">My Twitter</a>
+      <a href="https://twitch.tv/pricklety" target="_blank" class="button-twitch">My Twitch</a>
+      <a href="https://youtube.com/@Pricklety" target="_blank" class="button-youtube">My YouTube</a>
+      <a href="/home" target="_blank" class="button-youtube">prickle web</a>
     </div>
 
-    <script src="spotify-widget.js"></script>
-  </body>
-  </html>
+    <!-- New Navigation Links -->
+    <div class="nav-links">
+      <a href="portfolio.html" class="nav-btn">Portfolio</a>
+      <a href="favorites.html" class="nav-btn">Favorites</a>
+      <a href="projects.html" class="nav-btn">Projects</a>
+      <a href="changelog.html" class="nav-btn">Changelog</a>
+    </div>
+
+    <!-- Spotify Widget -->
+    <div id="spotify-container" class="now-playing" style="display:none;">
+      <img id="album-art" class="album-art" src="" alt="Album art" />
+      <div class="track-info">
+        <div class="listening-to">Listening to:</div>
+        <div id="track-name" class="track-name"></div>
+        <div id="track-artists" class="track-artists"></div>
+      </div>
+    </div>
+    <p id="spotify-message" style="color:#ccc; margin-top:10px;">Loading...</p>
+  </div>
+
+  <script src="spotify-widget.js"></script>
+</body>
+</html>
