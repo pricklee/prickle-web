@@ -368,7 +368,6 @@ function renderResults(data) {
     });
     resultsDiv.appendChild(container);
   } else if (currentTab === 'all') {
-    // --- Enhanced summary card for "All" tab ---
     const main = items[0];
     if (main) {
       // Cover image
@@ -379,7 +378,7 @@ function renderResults(data) {
         cover = `<img src="${main.pagemap.cse_thumbnail[0].src}" alt="cover" style="width:120px;height:auto;border-radius:8px;box-shadow:0 0 12px #00ffee;margin-bottom:10px;">`;
       }
 
-      // Screenshots (skip first if used as cover)
+      // Screenshots
       let screenshots = '';
       if (main.pagemap?.cse_thumbnail?.length > 1) {
         screenshots = main.pagemap.cse_thumbnail.slice(1).map(t =>
@@ -387,18 +386,28 @@ function renderResults(data) {
         ).join('');
       }
 
-      // Info
+      // Structured info: try to extract as much as possible
       let info = '';
-      if (main.pagemap?.metatags?.[0]) {
-        const meta = main.pagemap.metatags[0];
-        if (meta['og:description']) info += `<div style="margin-bottom:8px;">${meta['og:description']}</div>`;
-        if (meta['og:release_date']) info += `<div>Release Date: ${meta['og:release_date']}</div>`;
-        if (meta['og:rating']) info += `<div>Rating: ${meta['og:rating']}</div>`;
-        if (meta['og:type']) info += `<div>Type: ${meta['og:type']}</div>`;
-        if (meta['og:genre']) info += `<div>Genre: ${meta['og:genre']}</div>`;
-        if (meta['og:site_name']) info += `<div>Source: ${meta['og:site_name']}</div>`;
-      }
-      // Fallback to snippet if no description
+      const meta = main.pagemap?.metatags?.[0] || {};
+      // Common fields for entities
+      if (meta['og:description']) info += `<div style="margin-bottom:8px;">${meta['og:description']}</div>`;
+      if (meta['og:title'] && meta['og:title'] !== main.title) info += `<div><b>Title:</b> ${meta['og:title']}</div>`;
+      if (meta['og:type']) info += `<div><b>Type:</b> ${meta['og:type']}</div>`;
+      if (meta['og:release_date']) info += `<div><b>Release Date:</b> ${meta['og:release_date']}</div>`;
+      if (meta['og:rating']) info += `<div><b>Rating:</b> ${meta['og:rating']}</div>`;
+      if (meta['og:genre']) info += `<div><b>Genre:</b> ${meta['og:genre']}</div>`;
+      if (meta['og:site_name']) info += `<div><b>Source:</b> ${meta['og:site_name']}</div>`;
+      if (meta['country']) info += `<div><b>Country:</b> ${meta['country']}</div>`;
+      if (meta['population']) info += `<div><b>Population:</b> ${meta['population']}</div>`;
+      if (meta['birth_date']) info += `<div><b>Born:</b> ${meta['birth_date']}</div>`;
+      if (meta['death_date']) info += `<div><b>Died:</b> ${meta['death_date']}</div>`;
+      if (meta['occupation']) info += `<div><b>Occupation:</b> ${meta['occupation']}</div>`;
+      if (meta['area']) info += `<div><b>Area:</b> ${meta['area']}</div>`;
+      if (meta['capital']) info += `<div><b>Capital:</b> ${meta['capital']}</div>`;
+      if (meta['leader']) info += `<div><b>Leader:</b> ${meta['leader']}</div>`;
+      if (meta['currency']) info += `<div><b>Currency:</b> ${meta['currency']}</div>`;
+
+      // Fallback to snippet if no structured info
       if (!info && main.snippet) {
         info = `<div style="margin-bottom:8px;">${main.snippet}</div>`;
       }
