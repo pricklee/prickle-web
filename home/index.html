@@ -200,6 +200,7 @@
   <div class="tab active" data-tab="web">Web</div>
   <div class="tab" data-tab="images">Images</div>
   <div class="tab" data-tab="maps">Maps</div>
+  <div class="tab" data-tab="videos">Videos</div>
 </div>
 
 
@@ -220,6 +221,7 @@ const searchButton = document.getElementById('searchButton');
 const resultsDiv = document.getElementById('results');
 const summaryDiv = document.getElementById('summary');
 const tabElements = document.querySelectorAll('.tab');
+const siteDropdown = document.getElementById('siteDropdown');
 
 let currentTab = 'web';
 let currentPage = 1;
@@ -275,6 +277,17 @@ function showMaps(query) {
 function buildSearchUrl(query) {
   let start = 1 + ((currentPage - 1) * (currentTab === 'images' ? IMAGES_PER_PAGE : RESULTS_PER_PAGE));
   let q = query;
+  // Use dropdown value for site-specific search
+  const site = siteDropdown.value;
+  if (site !== 'google' && currentTab !== 'maps') {
+    q = `site:${site}.com ${query}`;
+    if (site === 'wikipedia') q = `site:wikipedia.org ${query}`;
+    if (site === 'reddit') q = `site:reddit.com ${query}`;
+    if (site === 'twitter') q = `site:twitter.com ${query}`;
+    if (site === 'spotify') q = `site:spotify.com ${query}`;
+    if (site === 'youtube') q = `site:youtube.com ${query}`;
+  }
+  // Videos tab always searches YouTube
   if (currentTab === 'videos') {
     q = `site:youtube.com ${query}`;
   }
