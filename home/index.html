@@ -329,6 +329,44 @@ function renderResults(data) {
       container.appendChild(img);
     });
     resultsDiv.appendChild(container);
+  } else if (currentTab === 'videos') {
+    const container = document.createElement('div');
+    container.className = 'image-results';
+    items.forEach(item => {
+      // Try to extract YouTube video ID
+      const ytMatch = item.link.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+      if (ytMatch) {
+        const videoId = ytMatch[1];
+        const iframe = document.createElement('iframe');
+        iframe.width = 320;
+        iframe.height = 180;
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        iframe.frameBorder = "0";
+        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        iframe.allowFullscreen = true;
+        container.appendChild(iframe);
+      } else if (item.pagemap?.videoobject?.[0]?.thumbnailurl) {
+        // Other video sites with thumbnail
+        const thumb = document.createElement('img');
+        thumb.src = item.pagemap.videoobject[0].thumbnailurl;
+        thumb.alt = item.title;
+        thumb.title = item.title;
+        thumb.style.width = '320px';
+        thumb.style.height = '180px';
+        thumb.addEventListener('click', () => window.open(item.link, '_blank'));
+        container.appendChild(thumb);
+      } else {
+        // Fallback: just show link
+        const div = document.createElement('div');
+        div.className = 'result';
+        div.innerHTML = `
+          <a href="${item.link}" class="title" target="_blank" rel="noopener">${item.title}</a>
+          <p class="snippet">${item.snippet}</p>
+        `;
+        container.appendChild(div);
+      }
+    });
+    resultsDiv.appendChild(container);
   } else {
     items.forEach(item => {
       const div = document.createElement('div');
