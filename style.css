@@ -4,66 +4,173 @@ body {
   color: #00ffee;
   font-family: 'Press Start 2P', monospace;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   height: 100vh;
-  overflow: hidden;
-}
-.button-twitter {
-  background-color: #2db7d6; 
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
+  overflow: auto;
 }
 
+/* Terminal Box */
+.terminal {
+  width: 90%;
+  max-width: 800px;
+  margin: 20px;
+  padding: 20px;
+  background: #121212;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: #eee;
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* Headings */
+h1, h2 {
+  color: #00ffee;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Links */
+a {
+  color: #00ffee;
+  text-decoration: none;
+  border-bottom: 1px dotted #00ffee;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: #fff;
+  background-color: #00ffee;
+  padding: 0 5px;
+  border-radius: 3px;
+}
+
+/* Lists */
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul li {
+  margin: 8px 0;
+}
+
+/* Projects */
+.project {
+  margin-bottom: 20px;
+}
+
+.project h2 {
+  color: #ff6347; /* Tomato color for project titles */
+}
+
+.project p {
+  color: #ccc;
+}
+/* Base Button Styles */
+.buttons a {
+  font-family: 'Press Start 2P', monospace;
+  text-decoration: none;
+  padding: 14px 28px;
+  font-size: 14px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+/* Twitter Button */
+.button-twitter {
+  background: linear-gradient(145deg, #2db7d6, #1aa0b3);
+  color: #fff;
+}
+.button-twitter:hover {
+  background: linear-gradient(145deg, #1aa0b3, #2db7d6);
+  color: #00ffee;
+  box-shadow: 0 0 15px #00ffee, 0 0 25px #00ffee;
+  transform: translateY(-2px);
+  border-color: #00ffee;
+}
+
+/* Twitch Button */
 .button-twitch {
-  background-color: #6441a5; 
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
+  background: linear-gradient(145deg, #6441a5, #502c85);
+  color: #fff;
 }
+.button-twitch:hover {
+  background: linear-gradient(145deg, #502c85, #6441a5);
+  color: #00ffee;
+  box-shadow: 0 0 15px #00ffee, 0 0 25px #00ffee;
+  transform: translateY(-2px);
+  border-color: #00ffee;
+}
+
+/* YouTube Button */
 .button-youtube {
-  background-color: #ff0000; 
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
+  background: linear-gradient(145deg, #ff0000, #cc0000);
+  color: #fff;
 }
+.button-youtube:hover {
+  background: linear-gradient(145deg, #cc0000, #ff0000);
+  color: #00ffee;
+  box-shadow: 0 0 15px #00ffee, 0 0 25px #00ffee;
+  transform: translateY(-2px);
+  border-color: #00ffee;
+}
+
+/* Button container */
 .buttons {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
   margin-top: 20px;
-  flex-wrap: wrap;      
-  justify-content: center; 
+}
+/* Navigation Buttons */
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 25px;
 }
 
-.button-twitter:hover {
-  background-color: #1a8f9c; 
+.nav-btn {
+  font-family: 'Press Start 2P', monospace;
+  text-decoration: none;
+  padding: 12px 24px;
+  font-size: 13px;
+  border: 2px solid #00ffee;
+  border-radius: 6px;
   color: #00ffee;
-  box-shadow: 0 0 10px #00ffee;
+  background-color: #111;
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.3s ease;
+  letter-spacing: 0.05em;
 }
 
-.button-twitch:hover {
-  background-color: #4b2c7f; 
-  color: #00ffee;
-  box-shadow: 0 0 10px #00ffee;
+.nav-btn:hover {
+  background-color: #00ffee;
+  color: #0a0a0a;
+  box-shadow: 0 0 15px #00ffee, 0 0 25px #00ffee;
+  transform: translateY(-2px);
 }
 
-.button-youtube:hover {
-  background-color: #cc0000; 
-  color: #00ffee;
-  box-shadow: 0 0 10px #00ffee;
+/* Optional: Glitch effect for nav buttons (subtle) */
+.nav-btn.glitch:hover::before,
+.nav-btn.glitch:hover::after {
+  content: attr(class);
+  position: absolute;
+  left: 0;
+  color: #0ff;
+  z-index: -1;
 }
 
 .now-playing {
