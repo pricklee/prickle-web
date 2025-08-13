@@ -197,7 +197,8 @@
   </div>
 
   <div class="tabs">
-  <div class="tab active" data-tab="web">Web</div>
+  <div class="tab active" data-tab="all">All</div>
+  <div class="tab" data-tab="web">Web</div>
   <div class="tab" data-tab="images">Images</div>
   <div class="tab" data-tab="maps">Maps</div>
   <div class="tab" data-tab="videos">Videos</div>
@@ -223,7 +224,7 @@ const summaryDiv = document.getElementById('summary');
 const tabElements = document.querySelectorAll('.tab');
 const siteDropdown = document.getElementById('siteDropdown');
 
-let currentTab = 'web';
+let currentTab = 'all';
 let currentPage = 1;
 const RESULTS_PER_PAGE = 10;
 const IMAGES_PER_PAGE = 10;
@@ -277,20 +278,22 @@ function showMaps(query) {
 function buildSearchUrl(query) {
   let start = 1 + ((currentPage - 1) * (currentTab === 'images' ? IMAGES_PER_PAGE : RESULTS_PER_PAGE));
   let q = query;
-  // Use dropdown value for site-specific search
   const site = siteDropdown.value;
-  if (site !== 'google' && currentTab !== 'maps') {
-    q = `site:${site}.com ${query}`;
-    if (site === 'wikipedia') q = `site:wikipedia.org ${query}`;
-    if (site === 'reddit') q = `site:reddit.com ${query}`;
-    if (site === 'twitter') q = `site:twitter.com ${query}`;
-    if (site === 'spotify') q = `site:spotify.com ${query}`;
-    if (site === 'youtube') q = `site:youtube.com ${query}`;
-  }
-  // Videos tab always searches YouTube
+
   if (currentTab === 'videos') {
     q = `site:youtube.com ${query}`;
+  } else if (currentTab === 'web') {
+    if (site !== 'google' && currentTab !== 'maps') {
+      q = `site:${site}.com ${query}`;
+      if (site === 'wikipedia') q = `site:wikipedia.org ${query}`;
+      if (site === 'reddit') q = `site:reddit.com ${query}`;
+      if (site === 'twitter') q = `site:twitter.com ${query}`;
+      if (site === 'spotify') q = `site:spotify.com ${query}`;
+      if (site === 'youtube') q = `site:youtube.com ${query}`;
+    }
   }
+  // "All" tab: no site restriction, just the query
+
   let url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(q)}&start=${start}`;
   if (currentTab === 'images') {
     url += `&searchType=image&num=${IMAGES_PER_PAGE}`;
@@ -333,7 +336,6 @@ function renderResults(data) {
     const container = document.createElement('div');
     container.className = 'image-results';
     items.forEach(item => {
-      // Try to extract YouTube video ID
       const ytMatch = item.link.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
       if (ytMatch) {
         const videoId = ytMatch[1];
@@ -346,7 +348,6 @@ function renderResults(data) {
         iframe.allowFullscreen = true;
         container.appendChild(iframe);
       } else if (item.pagemap?.videoobject?.[0]?.thumbnailurl) {
-        // Other video sites with thumbnail
         const thumb = document.createElement('img');
         thumb.src = item.pagemap.videoobject[0].thumbnailurl;
         thumb.alt = item.title;
@@ -356,7 +357,6 @@ function renderResults(data) {
         thumb.addEventListener('click', () => window.open(item.link, '_blank'));
         container.appendChild(thumb);
       } else {
-        // Fallback: just show link
         const div = document.createElement('div');
         div.className = 'result';
         div.innerHTML = `
@@ -367,6 +367,51 @@ function renderResults(data) {
       }
     });
     resultsDiv.appendChild(container);
+  } else if (currentTab === 'all') {
+    // --- Enhanced summary card for "All" tab ---
+    const main = items[0];
+    if (main) {
+      let cover = '';
+      if (main.pagemap?.cse_image?.[0]?.src) {
+        cover = `<img src="${main.pagemap.cse_image[0].src}" alt="cover" style="width:120px;height:auto;border-radius:8px;box-shadow:0 0 12px #00ffee;margin-bottom:10px;">`;
+      }
+      let screenshots = '';
+      if (main.pagemap?.cse_thumbnail) {
+        screenshots = main.pagemap.cse_thumbnail.map(t =>
+          `<img src="${t.src}" alt="screenshot" style="width:80px;height:auto;border-radius:6px;box-shadow:0 0 8px #00ffee;margin-right:6px;">`
+        ).join('');
+      }
+      let info = '';
+      if (main.pagemap?.metatags?.[0]) {
+        const meta = main.pagemap.metatags[0];
+        if (meta['og:description']) info += `<div style="margin-bottom:8px;">${meta['og:description']}</div>`;
+        if (meta['og:release_date']) info += `<div>Release Date: ${meta['og:release_date']}</div>`;
+        if (meta['og:rating']) info += `<div>Rating: ${meta['og:rating']}</div>`;
+      }
+      summaryDiv.innerHTML = `
+        <div style="display:flex;align-items:center;gap:18px;">
+          ${cover}
+          <div>
+            <div style="font-size:22px;font-weight:bold;color:#00ffee;margin-bottom:8px;">${main.title}</div>
+            ${info}
+          </div>
+        </div>
+        <div style="margin-top:12px;">${screenshots}</div>
+      `;
+      summaryDiv.style.display = 'block';
+    } else {
+      summaryDiv.style.display = 'none';
+    }
+    // --- Standard results below summary ---
+    items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'result';
+      div.innerHTML = `
+        <a href="${item.link}" class="title" target="_blank" rel="noopener">${item.title}</a>
+        <p class="snippet">${item.snippet}</p>
+      `;
+      resultsDiv.appendChild(div);
+    });
   } else {
     items.forEach(item => {
       const div = document.createElement('div');
