@@ -371,23 +371,38 @@ function renderResults(data) {
     // --- Enhanced summary card for "All" tab ---
     const main = items[0];
     if (main) {
+      // Cover image
       let cover = '';
       if (main.pagemap?.cse_image?.[0]?.src) {
         cover = `<img src="${main.pagemap.cse_image[0].src}" alt="cover" style="width:120px;height:auto;border-radius:8px;box-shadow:0 0 12px #00ffee;margin-bottom:10px;">`;
+      } else if (main.pagemap?.cse_thumbnail?.[0]?.src) {
+        cover = `<img src="${main.pagemap.cse_thumbnail[0].src}" alt="cover" style="width:120px;height:auto;border-radius:8px;box-shadow:0 0 12px #00ffee;margin-bottom:10px;">`;
       }
+
+      // Screenshots (skip first if used as cover)
       let screenshots = '';
-      if (main.pagemap?.cse_thumbnail) {
-        screenshots = main.pagemap.cse_thumbnail.map(t =>
+      if (main.pagemap?.cse_thumbnail?.length > 1) {
+        screenshots = main.pagemap.cse_thumbnail.slice(1).map(t =>
           `<img src="${t.src}" alt="screenshot" style="width:80px;height:auto;border-radius:6px;box-shadow:0 0 8px #00ffee;margin-right:6px;">`
         ).join('');
       }
+
+      // Info
       let info = '';
       if (main.pagemap?.metatags?.[0]) {
         const meta = main.pagemap.metatags[0];
         if (meta['og:description']) info += `<div style="margin-bottom:8px;">${meta['og:description']}</div>`;
         if (meta['og:release_date']) info += `<div>Release Date: ${meta['og:release_date']}</div>`;
         if (meta['og:rating']) info += `<div>Rating: ${meta['og:rating']}</div>`;
+        if (meta['og:type']) info += `<div>Type: ${meta['og:type']}</div>`;
+        if (meta['og:genre']) info += `<div>Genre: ${meta['og:genre']}</div>`;
+        if (meta['og:site_name']) info += `<div>Source: ${meta['og:site_name']}</div>`;
       }
+      // Fallback to snippet if no description
+      if (!info && main.snippet) {
+        info = `<div style="margin-bottom:8px;">${main.snippet}</div>`;
+      }
+
       summaryDiv.innerHTML = `
         <div style="display:flex;align-items:center;gap:18px;">
           ${cover}
@@ -396,7 +411,7 @@ function renderResults(data) {
             ${info}
           </div>
         </div>
-        <div style="margin-top:12px;">${screenshots}</div>
+        ${screenshots ? `<div style="margin-top:12px;">${screenshots}</div>` : ''}
       `;
       summaryDiv.style.display = 'block';
     } else {
