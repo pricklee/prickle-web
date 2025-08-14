@@ -123,6 +123,32 @@ ul li {
   border-color: #00ffee;
 }
 
+/* web button */
+.button-web {
+  background: linear-gradient(145deg, #00ff2a, #00cc69);
+  color: #fff;
+}
+.button-web:hover {
+  background: linear-gradient(145deg, #00cc14, #00ff40);
+  color: #00ffee;
+  box-shadow: 0 0 15px #00ffee, 0 0 25px #00ffee;
+  transform: translateY(-2px);
+  border-color: #00ffee;
+}
+
+/* osu! button */
+.button-osu {
+  background: linear-gradient(145deg, #ff66b2, #ff3385);
+  color: #fff;
+}
+.button-osu:hover {
+  background: linear-gradient(145deg, #ff3385, #ff66b2);
+  color: #00ffee;
+  box-shadow: 0 0 15px #00ffee, 0 0 25px #00ffee;
+  transform: translateY(-2px);
+  border-color: #00ffee;
+}
+
 /* Button container */
 .buttons {
   display: flex;
