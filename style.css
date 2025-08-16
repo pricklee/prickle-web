@@ -123,6 +123,19 @@ ul li {
   border-color: #00ffee;
 }
 
+/* GitHub Button */
+.button-github {
+  background: linear-gradient(145deg, #333, #444);
+  color: #fff;
+}
+.button-github:hover {
+  background: linear-gradient(145deg, #444, #333);
+  color: #00ffee;
+  box-shadow: 0 0 15px #00ffee, 0 0 25px #00ffee;
+  transform: translateY(-2px);
+  border-color: #00ffee;
+}
+
 /* Twitch Button */
 .button-twitch {
   background: linear-gradient(145deg, #6441a5, #502c85);
